@@ -3,3 +3,7 @@
 Http sunucu olmalı
 Dataları sıralama (Data yazılırken bi liste olmalı teker teker bitirmeli)
 Ram'e belli kısmı kaydetmeli bulamazsa I/O yapmalı
+
+
+var a = 1
+a++;
