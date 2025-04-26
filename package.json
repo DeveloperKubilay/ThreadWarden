@@ -1,24 +1,38 @@
 {
-  "name": "Nodejs-Thread-System-Example",
+  "name": "threadwarden",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "A high-performance Node.js library that distributes work across multiple CPU cores using worker threads with automatic load balancing",
+  "main": "module.js",
   "scripts": {
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DeveloperKubilay/QDB.git"
+    "url": "git+https://github.com/DeveloperKubilay/ThreadWarden.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "worker-threads",
+    "multi-threading",
+    "load-balancing",
+    "performance",
+    "cpu-optimization",
+    "distributed-computing",
+    "thread-management",
+    "nodejs",
+    "parallelization"
+  ],
+  "author": "Kubilay",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/DeveloperKubilay/QDB/issues"
+    "url": "https://github.com/DeveloperKubilay/ThreadWarden/issues"
   },
-  "homepage": "https://github.com/DeveloperKubilay/QDB#readme",
-  "description": "",
+  "homepage": "https://github.com/DeveloperKubilay/ThreadWarden#readme",
   "dependencies": {
     "systeminformation": "^5.25.11"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   }
 }
