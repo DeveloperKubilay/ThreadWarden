@@ -23,7 +23,7 @@
     "parallelization"
   ],
   "author": "Kubilay",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/DeveloperKubilay/ThreadWarden/issues"
