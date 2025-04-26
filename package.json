@@ -1,6 +1,6 @@
 {
   "name": "threadwarden",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A high-performance Node.js library that distributes work across multiple CPU cores using worker threads with automatic load balancing",
   "main": "module.js",
   "scripts": {
