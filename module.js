@@ -9,6 +9,8 @@ const responseHandlers = new Map();
 let messageIdCounter = 0;
 let nowthread = 0;
 
+var workerFile;
+
 function sendDirectMsg(workerId, message) {
     return new Promise((resolve, reject) => {
         if (workerId < 0 || workerId >= workers.length) {
@@ -39,7 +41,8 @@ function sendMsg(message) {
 function createWorker(id) {
     const worker = new Worker(path.resolve(__dirname, 'worker.js'), { 
         workerData: { 
-            workerId: id
+            workerId: id,
+            workerFile: workerFile
         }
     });
     
@@ -62,7 +65,11 @@ function createWorker(id) {
     return worker;
 }
 
-function main() {
+async function main() {
+    await new Promise(resolve => {
+        if(workerFile) resolve();
+        else setTimeout(resolve, 1000);
+    });
     for (let i = 0; i < numThreads; i++) {
         workers.push(createWorker(i));
     }
@@ -83,10 +90,15 @@ function main() {
       }, 2000);
 }
 
-main();
 
-module.exports = {
-    sendDirectMsg,
-    sendToAll,
-    sendMsg
+
+module.exports = async function(file){
+    if(!file) throw new Error("ThreadWarden: Worker file is not defined.");
+    workerFile = path.resolve(process.cwd(), file);
+    await main();
+    return {
+        sendMsg,
+        sendDirectMsg,
+        sendToAll
+    };
 };

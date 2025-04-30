@@ -19,22 +19,45 @@ npm install threadwarden
 
 ## 🚀 Usage
 
+First, create a worker file that will be executed in each thread:
+## worker.js
 ```javascript
-const { sendMsg, sendDirectMsg, sendToAll } = require('threadwarden');
+// worker.js - This defines what each worker should do with received messages
+module.exports = function (message, workerId) {
+    // Process the message
+    if (typeof message === "number")
+        return message + 1;  // For numbers, add 1
+        
+    // For other messages, return a formatted response
+    return `Worker ${workerId} processed: ${message}`;
+}
+```
 
-// Send a message to the least busy worker thread
-const response = await sendMsg("Process this data");
-console.log(response);
+Then, initialize ThreadWarden with your worker file:
+## index.js
+```javascript
+async function main() {
+    // Initialize ThreadWarden with the path to your worker file
+    const { sendMsg, sendDirectMsg, sendToAll } = await require('threadwarden')("./worker.js");
 
-// Send a message to a specific worker thread
-const specificResponse = await sendDirectMsg(2, "Worker 2, process this");
-console.log(specificResponse);
+    // Send a message to the least busy worker thread
+    const response = await sendMsg(1);
+    console.log("1+1=", response);  // Output: 1+1= 2
 
-// Broadcast a message to all worker threads
-sendToAll("Attention all workers!");
+    // Send a message to a specific worker thread
+    const specificResponse = await sendDirectMsg(2, "Hello worker!");
+    console.log(specificResponse);  // Output depends on your worker implementation
+
+    // Broadcast a message to all worker threads
+    sendToAll({ notification: "System update in progress" });
+}
+main();
 ```
 
 ## 🔍 API Reference
+
+### require('threadwarden')(workerFilePath)
+Initializes ThreadWarden with the specified worker file. Returns a Promise that resolves to an object containing the messaging functions.
 
 ### sendMsg(message)
 Sends a message to the worker with the lowest CPU load and returns a Promise with the response.
@@ -44,6 +67,13 @@ Sends a message to a specific worker by ID and returns a Promise with the respon
 
 ### sendToAll(message)
 Broadcasts a message to all workers (no response).
+
+### Worker File Structure
+Your worker file should export a function that accepts two parameters:
+- `message`: The data sent to the worker
+- `workerId`: The ID of the worker processing the message
+
+The function should return the result to be sent back to the main thread.
 
 ---
 
@@ -66,22 +96,47 @@ npm install threadwarden
 
 ## 🚀 Kullanım
 
+Önce, her iş parçacığında çalıştırılacak bir worker dosyası oluşturun:
+
+## worker.js
 ```javascript
-const { sendMsg, sendDirectMsg, sendToAll } = require('threadwarden');
+// worker.js - Her worker'ın gelen mesajlarla ne yapacağını tanımlar
+module.exports = function (message, workerId) {
+    // Mesajı işle
+    if (typeof message === "number")
+        return message + 1;  // Sayılar için 1 ekle
+        
+    // Diğer mesajlar için biçimlendirilmiş bir yanıt döndür
+    return `Worker ${workerId} işledi: ${message}`;
+}
+```
 
-// En az meşgul worker thread'e mesaj gönder
-const response = await sendMsg("Bu veriyi işle");
-console.log(response);
+Ardından, ThreadWarden'ı worker dosyanızla başlatın:
 
-// Belirli bir worker thread'e mesaj gönder
-const specificResponse = await sendDirectMsg(2, "Worker 2, bunu işle");
-console.log(specificResponse);
+## index.js
+```javascript
+async function main() {
+    // ThreadWarden'ı worker dosyanızın yoluyla başlatın
+    const { sendMsg, sendDirectMsg, sendToAll } = await require('threadwarden')("./worker.js");
 
-// Tüm worker thread'lere mesaj yayınla
-sendToAll("Dikkat tüm worker'lar!");
+    // En az meşgul worker thread'e mesaj gönder
+    const response = await sendMsg(1);
+    console.log("1+1=", response);  // Çıktı: 1+1= 2
+
+    // Belirli bir worker thread'e mesaj gönder
+    const specificResponse = await sendDirectMsg(2, "Merhaba worker!");
+    console.log(specificResponse);  // Çıktı worker implementasyonunuza bağlıdır
+
+    // Tüm worker thread'lere mesaj yayınla
+    sendToAll({ bildirim: "Sistem güncellemesi devam ediyor" });
+}
+main();
 ```
 
 ## 🔍 API Referansı
+
+### require('threadwarden')(workerFilePath)
+ThreadWarden'ı belirtilen worker dosyasıyla başlatır. Mesajlaşma fonksiyonlarını içeren bir nesne ile çözülen bir Promise döndürür.
 
 ### sendMsg(message)
 En düşük CPU yüküne sahip worker'a mesaj gönderir ve yanıtla birlikte Promise döndürür.
@@ -91,3 +146,10 @@ Kimliğe göre belirli bir worker'a mesaj gönderir ve yanıtla birlikte Promise
 
 ### sendToAll(message)
 Tüm worker'lara mesaj yayınlar (yanıt yoktur).
+
+### Worker Dosyası Yapısı
+Worker dosyanız iki parametre alan bir fonksiyon dışa aktarmalıdır:
+- `message`: Worker'a gönderilen veri
+- `workerId`: Mesajı işleyen worker'ın ID'si
+
+Fonksiyon, ana iş parçacığına geri gönderilecek sonucu döndürmelidir.
